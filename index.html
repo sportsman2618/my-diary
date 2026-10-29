@@ -45,9 +45,11 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
   clip-path:polygon(100% 0,100% 100%,0 50%); }
 
 /* ---------- scene / book ---------- */
-#scene{ position:fixed; inset:0; z-index:5; display:grid; place-items:center; cursor:pointer;
-  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; }
-#stage{ width:var(--PW); height:var(--PH); transition:transform 1s cubic-bezier(.4,.1,.2,1); }
+#scene{ position:fixed; left:0; top:0; width:100%; height:100vh; height:100dvh; z-index:5; overflow:hidden; cursor:pointer;
+  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+#stage{ position:absolute; left:50%; top:50%; width:var(--PW); height:var(--PH);
+  margin-left:calc(var(--PW) / -2); margin-top:calc(var(--PH) / -2);
+  transform-origin:50% 50%; transition:transform 1s cubic-bezier(.4,.1,.2,1); }
 #book{ position:relative; width:100%; height:100%; transition:transform 1s cubic-bezier(.4,.1,.2,1); }
 
 /* dark green hard cover frame visible behind open spread */
@@ -239,6 +241,424 @@ html, body {
 </head>
 
 <body>
-  <h1>Wait</h1>
+
+<!-- table decorations -->
+<div class="plant" style="top:-6px;left:-6px;width:160px;height:160px">
+  <i style="left:10px;top:30px;transform:rotate(18deg)"></i>
+  <i style="left:6px;top:70px;transform:rotate(55deg);width:110px"></i>
+  <i style="left:30px;top:6px;transform:rotate(-12deg);width:80px"></i>
+</div>
+<div class="lamp">&#9733;&#9733;</div>
+<div class="pen"></div>
+
+<!-- Diary yaha dikhti hai -->
+<div id="scene">
+  <div id="stage">
+    <div id="book">
+      <div id="mat"></div>
+      <div id="ribbon"></div>
+    </div>
+  </div>
+</div>
+
+<div id="hint">Click on the diary to open it &nbsp;&bull;&nbsp; to turn page , click on left or right side of page  </div>
+<button class="nav" id="bPrev" aria-label="Previous">&lsaquo;</button>
+<button class="nav" id="bNext" aria-label="Next">&rsaquo;</button>
+
+
+<!-- =====================================================================
+     ==========  DIARY KA CONTENT (yaha se text change karo)  ============
+     ===================================================================== -->
+<div id="source" style="display:none">
+
+  <!-- ================= 1) FRONT COVER KA TEXT (band diary ke upar) ================= -->
+  <div id="cover-front" class="cover-art">
+    <div class="spine-band"></div>
+    <div class="c-title gold" style="font-family: 'Times New Roman', Times, serif;"">For Aashi</div>               <!-- <- Bara title -->
+    <div class="c-orn gold">&#10086;</div>
+    <div class="c-sub gold">Just Some  Random<br>&middot; Thoghts &middot;</div>   <!-- <- Chota text -->
+    <div class="c-year gold">2026</div>                    <!-- <- Saal / naam -->
+  </div>
+
+  <!-- ================= 2) BACK COVER KA TEXT (diary khatam hone par) ================= -->
+  <div id="cover-back" class="cover-art">
+    <div class="spine-band"></div>
+    <div class="c-orn gold" style="font-size:54px">&#10047;</div>
+    <div class="c-sub gold">The End<br>&mdash; for now &mdash;</div>
+  </div>
+
+  <!-- ================= 3) PAGES ================= -->
+  <!--
+    HAR <article class="page"> = diary ka EK page (aik taraf).
+    Page 1 = left, Page 2 = right, Page 3 = left, Page 4 = right ... (khud ba khud).
+    Naya page add karna ho to neeche kisi bhi page ka poora block
+    <article class="page"> ... </article> COPY karke is list ke END me
+    ("PAGES KHATAM" wale comment se pehle) paste kar do. Bas.
+    Page numbers aur left/right apne aap lag jate hain.
+    Agar pages ki ginti taaq (odd) ho to aakhri me khali page khud lag jata hai.
+
+    PHOTO lagane ke liye:  <img class="photo right" src="photo.jpg">
+        class="photo right"  -> photo right side, text left me
+        class="photo left"   -> photo left side, text right me
+        size ke liye add karo: small / big / wide   (e.g. "photo left small")
+        Photo ko title ke baad ya kisi bhi paragraph se pehle rakho,
+        text uske aas paas khud adjust ho jayega.
+        PHOTO NA LAGAO to us page par poora text hi hoga.
+    Photo file isi HTML file wale folder me rakho, aur src me uska naam likho.
+
+    Text ka rang: ink-blue ink-red ink-green ink-orange ink-purple ink-pink ink-black
+    Dil: <span class="hrt">&#9829;</span>      Smile: &#9786;
+    Dil/phool ke doodle: <i class="doodle flower" style="right:60px;bottom:70px"></i>
+        types: flower, lavender, heart, hearts
+    Agar text page se zyada ho jaye to font apne aap thora chota ho jata hai.
+  -->
+  <div id="pages">
+
+    <!-- ########## PAGE 1 (left) ########## -->
+    <article class="page">
+      <div class="date">25 Oct 2026</div>
+
+
+      <br>      
+
+      <p class="sign ink-pink"><span style="font-weight: bold;"">Assalam-o-Alaikum!</span> <span class="hrt">&#9829;</span></p>
+
+      <p class="ink-blue">Tum soch rahi ho gi keh mae na es me kia likha ho ga ya q likha ho ga . </p>
+      <p class="ink-black"> Kafi waqt beeet gia tum sa na sahi sa bat ho ski , na kuch sahi sa poch saka , na kch bata ska . <br> Waqt ki kharabi the , Ghalat fehmio ka samandar , gussa tha ya Umeedo ka pora na hona . Ap keh ab rahi the keh door a gae . But jb start hoi hmari bat kch dino tk mae na tumha phla jesa banany ki bhapor koshesh ki but kamyab ni hoa to mujha laga keh mae kamyab ni ho skta es me  &#9786;  <span class="hrt"></span></p>
+      <p class="ink-green">Kon kaha ghalat hai kaha thek hai en bato ka peechy bhag bhag kar had sa ziada ghalat fehmia pal li the hm na . Bhot Umeedy lagi hoi the kch toti to phr ni pata chala kia ghalat ho rha kia sahi  &#9786; <br> Mera ya diary likhna ki aik sab sa bara maqsad tumha btana bhe hai keh mujha tum sa koi Gila nahi Neesa &#128153; <br> Aor ya mae dill sa keh rha . Jo hoa jesa hoa meri bhe bht ghaltia os me . Lakin kb tk serf dosry ko ghalat kehna ki koshesh <br> me rahain gy . Jitna hum ghalti pa kesi ko blame <br> krty hai otna hum kbhe os ki achaio pa ni sarahty .</p>
+      <i class="doodle flower" style="right:70px;bottom:78px"></i>
+    </article>
+
+    <!-- ########## PAGE 2 (right) ########## -->
+    <article class="page">
+      <div class="date">26 Oct 2026</div>
+     
+      <img class="photo right big" src="First.jpg" alt="photo">
+      <p class="ink-blue">To mae na socha keh aj es Diary me manfi bato ko chor ka Kuch musbat likhoo . Wo likho jen pa mujha tumhara shukar guzar hona chahia , Wo likho jes me tm na mera sath dia , Wo likho jo hm na achi yady bnae , Wo likho jo lamhy mae yad karta akser , Wo likho jes me sawal na  hon , Wo likho jes me qasooor na likhy hoe hon , Wo likho jes me khaloos ho aor wo likho jo mae dill sa likho  &#128153; <br> </p>
+      <p class="ink-orange">Har insan ka apna masly hoty , Apna dukh apni preshaniaaa . Aor ya bhee sach hai keh jo face kr rha hota actual me wo he samjh sakta keh wo kesy kr rha . Wo masly phr tumhary hon  , mery hon ya kesi bhe insan ka . Masly hmesha preshani laty hai , demaghi sakon chala jata , dabao barh jata aor ya sary chezy yaqinan dunia ka har isnan ka sath hoti rehti hain . </p>
+      <p class="ink-purple">Tum pa bhe mushkil waqt aya jes me mae tumhary sath ni tha . mery sath bhe esy kafi mamlat pesh ae jen me mera bojh halka krna wala koi ni tha . On ki waja sa phr kafi chezy kharab ho gy . </p>
+      <p class="ink-black"> Phr mae na socha keh masly to hmesha rehty hain . Agr koi sath dy to os ka shukr gzar hona chahia aor agr koi na dy pae to os sa khafa hony ki bhe zrorat ni  &#9786;</p>
+      <p class="sign ink-purple"><span class="wavy">Keep going...</span> <span class="hrt">&#9829;</span></p>
+    </article>
+
+
+<!-- ########## PAGE 3 (left) ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+
+
+      <br>      
+
+      <h2 style="text-align: center; color: indianred;" >Dear Neesu</span> <span class="hrt">&#9829;</span></h2>
+
+      <p class="ink-blue"> Hamari dosti ko koi bht ziada arsa nahi guzer gia . Yahi koi aik sal ya os sa chand month ziada .  </p>
+            <img class="photo left" src="group.jpg" alt="photo">
+       <p class="ink-black">Normal aik group friendship sa kab ak achi dosti ho gy pata he ni chala . but bht he acha waqt guzra , Yaqeenan bht he achi yadain hain . mae akser yad bhe krta on sab bato ko ya jb kbhe on jagho pa jata jaaha hm sath gy thy . aor ya mae khud krta jan bojh kar keh mujha acha lgta .    &#9786;  <span class="hrt"></span></p>
+      <img class="photo right small" src="third.jpg" alt="photo">
+
+       <p class="ink-green">Ap ka sath har bat share krna ki adat the aik hosla sa mil jata tha . jb khatam hoi bat hona ya kum hoi to esy kafi baty hoi jen me support chahia the kesi ki , esa ni hai keh koi tha he ni tb share krna ko . Log to bht sary thy but kesi sa share krna ka dill ni kra . &#9786; <br> .</p>
+       <p class="ink-red"> Phir os ka nuksan ya hoa keh esy log enter hoe life me aor chah kr bhe ni nikal pa rha tha , G bhar ka nuksan kia apna . es ka alawa bhe kafi kch hoa but cover ho gy kch , kch reh bhe gae hain to ho jae gi <br> Mae na jb ya sara kch likhna start kia kch din ho gy es bat ko tb bhe mera ya likhna ka iarada ya ni tha keh tm sa phla wala behavior mango . mae bs kch ghalat fehmia door krna chah rha tha and ya btana ka lia keh ap sa koi shikwa ni mjha , thy bhe to ni hain ab aor ni hon gy . kch logo ka lia dill ko sakhiii kr dia jata aor mae na tumhary lia apna dill sakhi kr dia .   .</p>
+
+            <i class="doodle heart" style="right:56px;bottom:66px"></i>
+
+    </article>
+
+
+     <!-- ########## PAGE 4 (left)  --  ISME PHOTO NAHI, POORA PAGE TEXT ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <p class="ink-blue">Sakhi kar dany sa ya ni murad keh mujha kbhe kch bura ni lagy ga ya koi shikwa ni ho ga . Obv wo to insan hon agr esa kch hoa to bura bhe lg skta shikwa bhe ho skta . <br> But InshaAllah mae os pa nomral rehna ya compromise krna ki koshesh kro ga Mean ya keh ap ko mera gussa , ajeeb baty , gily shikway , reaction aor esy kafi chezy ni dekhy gi aor ya bat kehna bazat e khud koi reaction ni hai .   </p>
+      <p class="ink-black">Han albata agr ap jan bojh kar esa kch boly ya kary jo ap ko pata bhe ho keh gheer munasib bat ya koi esa amal jo na acha lgta ho to wo bura to lgy ga he dill me bhe reh jae maybe . <br> Ap enjoy kry apni life . mery zrorat pary kahi bhe uni ka mamalat hon ya bahir koi to mae apni traf sa jo bhe ho skta hoa zror kro ga . Jo na ho skta hoa wo phr majbori . and mery pass shaktia ni hain jo mujha a ka inform kry agr ap ko koi bat krni hoti to ap sedha bol dia kry . offline agr hon mae to mean so rha hon aor ap phla bta dia kry ya number pa call kr lia kry . <br> </p>
+
+      <p class="ink-orange"> Phla es me mae na kch pages add kia hoe thy on bato ka jo hm na achi yady bnae ya wo chezy mae yad krta rehta but aj mae na wo pages del kia es me sa ap ka msg ka bad keh i wanna forget the past . To mae na socha mae bhe esy koi baty recall na krwaon . Es lia mae na wo part he nikal diya es me sa . 
+
+
+</p>
+    </article>
+
+
+
+
+    <!-- ########## PAGE 5 (left)  --  ISME PHOTO NAHI, POORA PAGE TEXT ########## -->
+    <article class="page">
+      <div class="date">28 Oct 2026</div>
+      <h2 class="title ink-indigo">Main shukar guzar hon</h2>
+      <p class="ink-blue">Har os koshesh ka lia jo ap na meri help ka lia ki <br> Har os harf ka lia jes sa ap na mujha ezat di <br> Har os jumlay ka lia jes me mujha Ehmiyat di <br> Har os lamhy ka jes me ap mery sath the </p>
+      <p class="ink-black">Har os din ka lia jes me mery lia waqt nikala <br> Har os nawaly ka lia jo hm na sath khae <br> Har os musafat ka lia Jes me hm sath chaly <br> Har os call ka lia Jo mujha jgany ka lia ap na ki <br> Har os bat ka lia Jes sa mujha apniyat ka ehsas hoa
+<br> Har os alarm ka lia Jo any case me mery lia lga ka ap othi 
+
+
+  <span class="hrt">&#9829;</span></p>
+      <p class="ink-green">Har os Khushi ka lia Jo mujha ap ki sa ya apki waja sa mili <br> Har os ghari ka lia Jes me ap mery lia fiker-mand hoi <br> Har os wazahat ka lia Jo mujha itmad me lany ka lia ap na di 
+
+ 
+
+</p>
+      <p class="ink-orange">Har os wazahat ka lia Jo mujha itmad me lany ka lia ap na di <br> Har os raz ka lia Jes me mujha Hamraz bnaya <br> Har os zid ka lia Jo mazeed kch waqt bitany ka li ki <br>
+
+
+</p>
+    </article>
+
+    <!-- ########## PAGE 6 (right)  --  photo LEFT side ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <img class="photo left" src="second.jpg" alt="photo">
+      <p class="ink-green">Har os jagah ka lia jaha hm sath gy <br> Har os Mazak ka lia Jes me ham hansy. <br>Har os waqt ka lia jab hum ne waqt ka khayal hi nahi rakha. <br> Har os baat ka lia jis par humari soch aik jesi nikli <br> </p>
+      <p class="ink-red">Har us mauqy ka lia jab ap ne meri baat ko tawajjo se suna <br> Har us mashwary ka lia jis mein ap ne meri behtari sochi <br> Har us sawal ka lia jis se ap ne meri pareshani ki wajah jan’ni chahi <br> Har us dafa ka lia jab ap ne meri pasand ka khayal rakha  <span class="hrt">&#9829;</span></p>
+      <p class="ink-blue">  Har os achi adat ka lia jo mae na ap sa sekhi <br> Har os lamhy ka lia jab ap na mujha akela mehsoos nahi honay dia</p>
+      <p class="ink-purple"> Har os support ka lia jo ap na mushkil <br>  waqt ma mera kia<br> Har os bharosay ka lia jo ap na mujh par kia <br> Aor har os baat ka lia jo mae yaha ni likh saka </p>
+      <i class="doodle flower" style="right:60px;bottom:72px"></i>
+    </article>
+ 
+
+
+
+
+    <!-- ########## PAGE 7 (left)  --  do photos ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <h2 class="title ink-purple">Mae mazrat khawah hon</h2>
+      <img class="photo right" src="mine.jpg" alt="photo">
+      <p class="ink-purple">Har os baat ka lia jis na ap ka dil dukhaya <br> Har os rawaiye ka lia jis sa ap ko takleef hoi <br>  Har os baar ka lia jab ap ki baat samajhny ma dair ki <br> </p>
+      <p class="ink-blue">Har os baar ka lia jab ap ki baat ko ghalat samjha <br> Har os mauqy ka lia jab ap ki umeed par poora nahi utra   <br> Har os baar ka lia jab ap ko meri wajah sa safai deni pari <br> Har os baar ka lia jab ap ki pareshani ko samajh nahi saka <br> </p>
+      <img class="photo left small" src="six.png" alt="photo">
+      <p class="ink-red">Har os lamhy ka lia jab ap ko meri baat buri lagi <br> Har os ghalti ka lia jo mujh sa baar baar hoi <br> Har os baar ka lia jab main ap ki baat ko ahmiyat nahi de saka <br></span></p>
+      <p class="ink-green">Har os mauqy ka lia jab mujha ap ka sath dena chahia tha <br> Har os baat ka lia jo main gussay ma keh gaya <br> Har os ehsas ka lia jisay main samajhny ma nakam raha   </p>
+
+      </article>
+
+
+         </article>
+
+    <!-- ########## PAGE 8 (right)  --  photo LEFT side ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <p class="ink-green">Har os haq ka lia jo ap ka tha magar main ada nahi kar saka <br> Har os baar ka lia jab ap ko meri wajah sa takleef hoi <br>  Har os baar ka lia jab ap ko meri wajah sa mayoosi hoi <br> Har os gham ka lia jis ki waja mae bana <br> Har os aansu ka lia jo meri sy baha <br> Har os baat ka lia jo ap dil ma rakh kar khamosh rahi </p>
+      <p class="ink-red">Har os takleef ka lia jis ka mujha andaza tak na ho saka <br> Har os lamhy ka lia jab ap ko meri taraf sa behtar rawaiye ki umeed thi <br> Har os waaday ka lia jo main poora nahi kar saka </p>
+      <p class="ink-blue">  Har os din ka lia jb ap ka maaan tora <br> Har os baar ka lia jab ap ki baat samajhny ma dair ki <br> Har os faislay ka lia jis mein main ap ki rai bhool gaya <br> Har os baar ka lia jab main ap ki baat kaat gaya <br> </p>
+      <p class="ink-purple">Har os zimmedari ka lia jo main theek sa nibha nahi saka <br> Har os din ka lia jb ap ki mojodgi me bhe kesi aor ko importance di <br> Har os lamhy ka lia jab main ap ki jagah khud ko rakh kar nahi soch saka <br> Har os baar ka lia jab main ap ki niyat par ghalat soch baitha  </p>
+    </article>
+ 
+ <!-- ########## PAGE 9 (left)  --  do photos ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <p class="ink-black">Har os baar ka lia jab main ap ki pareshani mein mazeed izafa kar gaya <br> Har os baat ka lia jis mein main ap ka bharosa jeet nahi saka <br> Har os mauqy ka lia jab main ap ki jagah apni ana ko ahmiyat de gaya <br> Har os judgement ka lia jes me mae na ap ki side ni suni  </p>
+      <p class="ink-blue"> Har ap ki os zid ka lia jo mae pori ni kr saka <br> Har ap ki os khawaish ka lia jes ki takmeel ni ki <br> Har ap ka os felsa ka lia jes ka ehtram ni kia <br>  </p>
+      <img class="photo right" src="sorry.jpg" alt="photo">
+      <p class="ink-red">  Har os lamhy ka lia jab main ne ap ki jagah apni sahulat ko chuna <br>  Har os khulooos ka lia jisay main ne apni laparwahi se nazar-andaz kia <br> <br>  Aor har os bat ka lia jes ki mazrat mae aj ni likh ska  &#128591; <br></span></p> <br> 
+            <p class="ink-orange">En sab bato ka lia dill sa mazrat &#128532; <br> <br> Ya sab baty mae es lia ni kr rha keh ap ka aj ya msg ae , ya sab to mae na phla he likhna tha ap fasla lany ka decision kry ya phla jesa hona ka ya likhna ka kafi time sa decide ho chuka tha final aj hoa </span></p>
+
+
+      </article>
+
+
+    <!-- ########## PAGE 10 (right)  --  aakhri page ########## -->
+    <article class="page">
+      <div class="date">30 Oct 2026 </div>
+      <h2 class="title ink-pink">Thank You</h2>
+                  <img class="photo left" src="thanks.jpg" alt="photo">
+
+      <p class="ink-blue">Thanks again for everything . Guzry waqt ka har aik lamhay ka lia . <br> Allah pak ap ko Hmesha khush rakhy aor kamyabia ata kry . <br> Ap ki tamam naik khawaishat pori kry <br> Aor ap ko tamam preshanio , mushkilat , dukho , taqleefo , udasio , zakhmoo , dhoky , hasad , nafrat , Riya karii , aor napak iraado sa mehfooz rakhy &#129293; Ameen &#128140; </p>
+
+      <p class="ink-red">Ap ka fesla sar ankho pa abhe aj rat jo ap ka msgs thy . Mjha os me sa kch bhe bura ni lga . Ap ki life hai ap ko haq hai pora jo bhe fesla lain . <br> Mujha os me sa kch bhe bura lgna banta bhe ni .  <span class="hrt">&#9829;</span></p>
+      <p class="ink-green">Meri traf sa ap ko kbhe koi shikayat ni ho gi inshaAllah . <br> And i am here jb bhe meri zrorat pry . Just call me . </p>
+      <p class="sign ink-purple"><span class="wavy">Fi Aman Allah</span> <span class="hrt">&#9829;</span></p>
+      <i class="doodle lavender" style="right:50px;bottom:70px"></i>
+    </article>
+
+    <!-- >>>> Naya page yaha PASTE karo (upar wale kisi page ka block copy karke) <<<< -->
+
+  </div>
+  <!-- ========================  PAGES KHATAM  ======================== -->
+</div>
+
+
+<!-- =====================================================================
+     SCRIPT (diary ko chalane wala code) - isme kuch change karne ki zaroorat nahi
+     ===================================================================== -->
+<script>
+(function(){
+  var PW = 560, PH = 760;
+  var $ = function(s){ return document.querySelector(s); };
+
+  /* ---------- generated textures & doodles ---------- */
+  var url = function(s){ return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")'; };
+  var rs = document.documentElement.style;
+  var NS = "xmlns='http://www.w3.org/2000/svg'";
+
+  rs.setProperty('--grain', url("<svg "+NS+" width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .2 0'/></filter><rect width='100%' height='100%' filter='url(#n)'/></svg>"));
+  rs.setProperty('--paper', url("<svg "+NS+" width='300' height='300'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .34  0 0 0 0 .14  0 0 0 .5 -.14'/></filter><rect width='100%' height='100%' filter='url(#p)'/></svg>"));
+  rs.setProperty('--wood', url("<svg "+NS+" width='1000' height='700'><filter id='w'><feTurbulence type='fractalNoise' baseFrequency='.004 .2' numOctaves='4' seed='7'/><feColorMatrix values='0 0 0 0 .16  0 0 0 0 .07  0 0 0 0 .02  0 0 0 1.3 -.3'/></filter><rect width='100%' height='100%' filter='url(#w)'/></svg>"));
+
+  var petals = '';
+  for (var i = 0; i < 8; i++) petals += "<ellipse cx='30' cy='17' rx='5' ry='10' transform='rotate(" + (i*45) + " 30 30)'/>";
+  rs.setProperty('--d-flower', url("<svg "+NS+" viewBox='0 0 60 92'><path d='M30 38 C31 58 28 74 25 90' stroke='#3f8f55' stroke-width='2.6' fill='none' stroke-linecap='round'/><path d='M28 70 C18 62 11 66 10 73 C19 77 26 75 28 70Z' fill='none' stroke='#3f8f55' stroke-width='2'/><g fill='#fff' stroke='#8d4fb4' stroke-width='1.8'>" + petals + "</g><circle cx='30' cy='30' r='6.5' fill='#f4b92c' stroke='#8d4fb4' stroke-width='1.5'/></svg>"));
+
+  var lav = '';
+  [[16,20],[35,6],[54,20]].forEach(function(e, idx){
+    lav += "<path d='M35 112 L" + e[0] + " " + e[1] + "' stroke='#5f8f4a' stroke-width='2' fill='none'/>";
+    for (var k = .3, n = 0; k <= 1.001; k += .075, n++){
+      var x = 35 + (e[0]-35)*k, y = 112 + (e[1]-112)*k, o = (n%2 ? 3.2 : -3.2);
+      lav += "<ellipse cx='" + (x+o) + "' cy='" + y + "' rx='2.8' ry='4.6' fill='#7b5cc4' stroke='#4b3590' stroke-width='.5'/>";
+    }
+  });
+  rs.setProperty('--d-lav', url("<svg "+NS+" viewBox='0 0 70 120'>" + lav + "<path d='M35 92 C18 80 18 102 35 92 C52 80 52 102 35 92Z' fill='none' stroke='#d6336c' stroke-width='2.4'/><path d='M35 92 L28 114 M35 92 L42 114' stroke='#d6336c' stroke-width='2.2' fill='none'/></svg>"));
+
+  var hp = "<path d='M25 43 C-4 22 6 -2 25 13 C44 -2 54 22 25 43Z' fill='none' stroke='#e0245e' stroke-width='3' stroke-linejoin='round'/>";
+  rs.setProperty('--d-heart',  url("<svg "+NS+" viewBox='-4 -4 58 52'>" + hp + "</svg>"));
+  rs.setProperty('--d-hearts', url("<svg "+NS+" viewBox='0 0 90 70'><g transform='translate(4,6) scale(1.05)'>" + hp + "</g><g transform='translate(54,28) scale(.68)'>" + hp + "</g></svg>"));
+
+  var PH_IMG = "data:image/svg+xml;utf8," + encodeURIComponent("<svg "+NS+" width='360' height='460'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#9ccdf0'/><stop offset='.6' stop-color='#f6d9a7'/><stop offset='1' stop-color='#7fb386'/></linearGradient></defs><rect width='360' height='460' fill='url(#g)'/><circle cx='260' cy='110' r='34' fill='#fff6c8'/><path d='M0 330 L110 210 L200 320 L270 250 L360 340 L360 460 L0 460Z' fill='#6c9a74'/><text x='180' y='420' font-size='26' text-anchor='middle' fill='#fff' font-family='sans-serif'>your photo here</text></svg>");
+
+  /* ---------- build the book ---------- */
+  var book = $('#book'), stage = $('#stage');
+  var pages = Array.prototype.slice.call(document.querySelectorAll('#pages > .page'));
+  if (pages.length % 2) {                       // odd ho to aakhri me khali page
+    var blank = document.createElement('article'); blank.className = 'page'; pages.push(blank);
+  }
+  pages.forEach(function(p, i){
+    p.classList.add(i % 2 ? 'R' : 'L');
+    var inner = document.createElement('div'); inner.className = 'inner';
+    while (p.firstChild) inner.appendChild(p.firstChild);
+    p.appendChild(inner);
+    var no = document.createElement('span'); no.className = 'pno'; no.textContent = i + 1; p.appendChild(no);
+  });
+
+  function face(node, side, extra){
+    var f = document.createElement('div'); f.className = 'face ' + side + (extra ? ' ' + extra : '');
+    f.appendChild(node); return f;
+  }
+  var L = pages.length / 2 + 1, leaves = [];
+  for (var k = 0; k < L; k++){
+    var leaf = document.createElement('div'); leaf.className = 'leaf';
+    var front = k === 0 ? $('#cover-front') : pages[2*k - 1];
+    var back  = k === L-1 ? $('#cover-back') : pages[2*k];
+    leaf.appendChild(face(front, 'front', k === 0 ? 'cover' : ''));
+    leaf.appendChild(face(back,  'back',  k === L-1 ? 'cover' : ''));
+    book.appendChild(leaf); leaves.push(leaf);
+  }
+
+  /* photo fallback (agar image load na ho) */
+  function imgFix(img){ if (!img.dataset.fb){ img.dataset.fb = 1; img.src = PH_IMG; } }
+  Array.prototype.forEach.call(document.querySelectorAll('.photo'), function(img){
+    img.addEventListener('error', function(){ imgFix(img); });
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) imgFix(img);
+  });
+
+  /* text zyada ho to font thora chota kar do taake page me poora aaye */
+  function fit(){
+    pages.forEach(function(p){
+      var inner = p.firstElementChild, fs = 23;
+      function set(){ p.style.setProperty('--fs', fs + 'px'); p.style.setProperty('--lh', Math.round(fs * 1.39) + 'px'); }
+      set();
+      while (inner.scrollHeight > inner.clientHeight + 2 && fs > 11){ fs -= .5; set(); }
+    });
+  }
+  fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  window.addEventListener('load', fit);
+
+  /* ---------- state & navigation ---------- */
+  var s = 0, side = 'R', single = false, busy = false;
+
+  function setZ(){ leaves.forEach(function(lf, i){ lf.style.zIndex = i < s ? i + 1 : L - i + 1; }); }
+
+  function layout(){
+    var vv = window.visualViewport;
+    var W = Math.round(vv ? vv.width  : innerWidth);
+    var H = Math.round(vv ? vv.height : innerHeight);
+    $('#scene').style.height = H + 'px';
+    single = (W / H) < 1.2;                       // phone / portrait: one page at a time
+    var open = s > 0 && s < L, shift, basis;
+    if (single){
+      basis = 600;                                // 560 page + cover edge + small margin
+      if (s === 0){ shift = 0; side = 'R'; }
+      else if (s === L){ shift = PW; side = 'L'; }
+      else shift = (side === 'L') ? PW : 0;
+    } else {
+      basis = open ? 1270 : 680;
+      shift = s === 0 ? 0 : (s === L ? PW : PW / 2);
+    }
+    var sc = Math.min(W / basis, (H - 80) / (PH + 40), 1.5);
+    stage.style.transform = 'scale(' + sc + ')';
+    book.style.transform  = 'translateX(' + shift + 'px)';
+    book.classList.toggle('open', open);
+  }
+
+  function flip(d){
+    busy = true;
+    var lf = leaves[d > 0 ? s : s - 1];
+    lf.style.zIndex = 1000;
+    s += d;
+    side = d > 0 ? 'L' : 'R';
+    leaves.forEach(function(l, i){ l.classList.toggle('flipped', i < s); });
+    layout();
+    setTimeout(function(){ setZ(); busy = false; }, 1150);
+    hideHint();
+  }
+  function next(){
+    if (busy) return;
+    if (single && s > 0 && s < L && side === 'L'){ side = 'R'; layout(); hideHint(); return; }
+    if (s < L) flip(1);
+  }
+  function prev(){
+    if (busy) return;
+    if (single && s > 0 && s < L && side === 'R'){ side = 'L'; layout(); hideHint(); return; }
+    if (s > 0) flip(-1);
+  }
+  function hideHint(){ $('#hint').classList.add('gone'); }
+
+  $('#scene').addEventListener('click', function(e){
+    if (s === 0) next();
+    else if (s === L) prev();
+    else (e.clientX < innerWidth / 2) ? prev() : next();
+  });
+  $('#bNext').addEventListener('click', next);
+  $('#bPrev').addEventListener('click', prev);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  });
+
+var tx = null;
+
+document.addEventListener('touchstart', function(e) {
+  // Don't treat pinch zoom as a page swipe
+  if (e.touches.length !== 1) {
+    tx = null;
+    return;
+  }
+
+  tx = e.touches[0].clientX;
+}, { passive: true });
+
+document.addEventListener('touchend', function(e) {
+  if (tx === null) return;
+
+  // Ignore multi-finger gestures
+  if (e.changedTouches.length !== 1) {
+    tx = null;
+    return;
+  }
+
+  var dx = e.changedTouches[0].clientX - tx;
+  tx = null;
+
+  if (Math.abs(dx) > 60) {
+    dx < 0 ? next() : prev();
+  }
+}, { passive: true });
+
+document.addEventListener('touchcancel', function() {
+  tx = null;
+}, { passive: true });
+
+  window.addEventListener('resize', layout);
+  window.addEventListener('orientationchange', function(){ setTimeout(layout, 200); });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', layout);
+  setZ(); layout();
+})();
+</script>
 </body>
 </html>
