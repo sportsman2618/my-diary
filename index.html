@@ -1,1 +1,244 @@
-wait
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover"><title>Neesa's Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Great+Vibes&family=Patrick+Hand&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   STYLE  (design). Zyada tar yaha kuch change karne ki zaroorat nahi.
+   ===================================================================== */
+:root{ --PW:560px; --PH:760px; }
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ height:100%; overflow:hidden; }
+body{
+  font-family:'Patrick Hand','Comic Sans MS',cursive;
+  background-color:#6b3b19;
+  background-image:
+    radial-gradient(ellipse 75% 65% at 50% 45%, rgba(255,196,120,.28), transparent 72%),
+    var(--wood);
+  background-size:auto, cover;
+  -webkit-text-size-adjust:100%;
+}
+/* table vignette */
+body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 45%, transparent 42%, rgba(0,0,0,.62) 100%); }
+
+/* ---------- table decorations ---------- */
+.plant{ position:fixed; z-index:2; pointer-events:none; }
+.plant i{ position:absolute; display:block; width:90px; height:46px;
+  background:linear-gradient(135deg,#4f9a45,#1f5f2c); border-radius:0 100% 0 100%;
+  box-shadow:0 6px 12px rgba(0,0,0,.4); transform-origin:left bottom; }
+.lamp{ position:fixed; z-index:2; top:-36px; right:-26px; width:150px; height:180px; pointer-events:none;
+  border-radius:26px; color:#fff3c4; font-size:30px; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 50% 58%, #ffe3a0 0, #ffae3f 30%, #7a3f0b 68%, #1a1109 100%);
+  box-shadow:0 0 150px 80px rgba(255,150,40,.32), inset 0 0 0 7px #16221f; text-shadow:0 0 12px #ffd37a; letter-spacing:14px; }
+.pen{ position:fixed; z-index:2; right:-190px; top:46%; width:380px; height:24px; pointer-events:none;
+  transform:rotate(-100deg); border-radius:12px;
+  background:linear-gradient(180deg,#3a3a3a,#050505 45%,#161616);
+  box-shadow:6px 10px 18px rgba(0,0,0,.6); }
+.pen::before{ content:''; position:absolute; left:70px; top:0; bottom:0; width:12px; background:linear-gradient(180deg,#f5de8f,#a77c1d); }
+.pen::after{ content:''; position:absolute; left:-34px; top:3px; width:36px; height:18px; background:linear-gradient(180deg,#e9cd7b,#9a7418);
+  clip-path:polygon(100% 0,100% 100%,0 50%); }
+
+/* ---------- scene / book ---------- */
+#scene{ position:fixed; inset:0; z-index:5; display:grid; place-items:center; cursor:pointer;
+  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; }
+#stage{ width:var(--PW); height:var(--PH); transition:transform 1s cubic-bezier(.4,.1,.2,1); }
+#book{ position:relative; width:100%; height:100%; transition:transform 1s cubic-bezier(.4,.1,.2,1); }
+
+/* dark green hard cover frame visible behind open spread */
+#mat{ position:absolute; z-index:0; pointer-events:none;
+  left:calc(var(--PW) * -1 - 14px); top:-14px; width:calc(var(--PW) * 2 + 28px); height:calc(var(--PH) + 28px);
+  background-color:#0b3a34; background-image:var(--grain), linear-gradient(135deg,#124840,#082824);
+  border-radius:14px; opacity:0; transition:opacity .7s;
+  box-shadow:0 34px 70px rgba(0,0,0,.72), 0 6px 14px rgba(0,0,0,.5), inset 0 0 0 2px rgba(255,255,255,.05); }
+#ribbon{ position:absolute; z-index:1; left:-7px; top:calc(var(--PH) + 8px); width:14px; height:56px; opacity:0; transition:opacity .7s;
+  background:linear-gradient(90deg,#10503a,#22835d,#10503a); clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%); }
+#book.open #mat, #book.open #ribbon{ opacity:1; }
+
+.leaf{ position:absolute; inset:0; transform-origin:left center; transform-style:preserve-3d;
+  transform:perspective(2600px) rotateY(0deg); transition:transform 1.1s cubic-bezier(.45,.05,.25,1); }
+.leaf.flipped{ transform:perspective(2600px) rotateY(-180deg); }
+.face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+.face.back{ transform:rotateY(180deg); }
+
+/* ---------- covers (black leather) ---------- */
+.face.cover{ background-color:#0b0b0c;
+  background-image:var(--grain), radial-gradient(ellipse at 30% 18%, #2e2e31, #121214 55%, #060607);
+  box-shadow:0 30px 60px rgba(0,0,0,.7), 0 4px 10px rgba(0,0,0,.6), inset 0 0 0 2px rgba(255,255,255,.05);
+  inset:-10px -10px -10px -4px; border-radius:6px 16px 16px 6px; }
+.face.cover.back{ inset:-10px -4px -10px -10px; border-radius:16px 6px 6px 16px; }
+.face.cover::before{ content:''; position:absolute; inset:30px 28px 30px 52px; border:2px dashed rgba(214,176,86,.4); border-radius:6px; pointer-events:none; }
+.face.cover.back::before{ inset:30px 52px 30px 28px; }
+.cover-art{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 70px; }
+.spine-band{ position:absolute; top:0; bottom:0; left:0; width:34px; background:linear-gradient(90deg,#000,#1d1d20 70%,#0a0a0b); border-right:1px solid rgba(255,255,255,.07); border-radius:6px 0 0 6px; }
+.face.back .spine-band{ left:auto; right:0; transform:scaleX(-1); border-radius:0 6px 6px 0; }
+.gold{ background:linear-gradient(135deg,#f7e6a6,#cfa443 40%,#8a6a1f 58%,#f2dc8d); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 2px rgba(0,0,0,.7)); }
+.c-title{ font-family:'Great Vibes','Caveat',cursive; font-size:96px; line-height:1.05; }
+.c-orn{ font-size:34px; margin:14px 0 10px; }
+.c-sub{ font-size:19px; letter-spacing:5px; text-transform:uppercase; line-height:1.7; }
+.c-year{ font-size:20px; letter-spacing:8px; margin-top:34px; }
+
+/* ---------- paper pages ---------- */
+.page{ position:absolute; inset:0; overflow:hidden; --fs:23px; --lh:32px; --top:56px;
+  background-color:#f5ead0;
+  background-image:
+    var(--paper),
+    linear-gradient(to bottom, transparent calc(var(--lh) - 7px), rgba(88,118,170,.42) calc(var(--lh) - 7px), rgba(88,118,170,.42) calc(var(--lh) - 6px), transparent calc(var(--lh) - 6px)),
+    radial-gradient(ellipse at 50% 50%, rgba(255,250,235,.55), rgba(190,150,90,.16) 100%);
+  background-size:300px 300px, 100% var(--lh), 100% 100%;
+  background-position:0 0, 0 var(--top), 0 0;
+  box-shadow:inset 0 0 46px rgba(150,100,40,.18); }
+.page.L{ border-radius:10px 3px 3px 10px; --ml:72px; --rl:50px; }
+.page.R{ border-radius:3px 10px 10px 3px; --ml:54px; --rl:32px; }
+.page::before{ content:''; position:absolute; top:0; bottom:0; left:var(--rl,40px); width:1px; background:rgba(214,64,70,.55); pointer-events:none; }
+.page::after{ content:''; position:absolute; inset:0; pointer-events:none; }
+.page.R::after{ background:linear-gradient(90deg, rgba(70,40,10,.42), rgba(70,40,10,.14) 5%, rgba(70,40,10,0) 15%), linear-gradient(270deg, rgba(0,0,0,.10), transparent 4%); }
+.page.L::after{ background:linear-gradient(270deg, rgba(70,40,10,.42), rgba(70,40,10,.14) 5%, rgba(70,40,10,0) 15%), linear-gradient(90deg, rgba(0,0,0,.10), transparent 4%); }
+
+.inner{ height:100%; padding:var(--top) 36px 44px var(--ml,54px); font-size:var(--fs); line-height:var(--lh); overflow:hidden; }
+.inner > *:not(.doodle){ position:relative; z-index:1; }
+.page p{ margin:0 0 var(--lh); text-shadow:0 0 .6px currentColor; }
+.pno{ position:absolute; right:42px; bottom:18px; font-size:15px; color:#5a5148; z-index:2; }
+
+.date{ font-size:.74em; line-height:var(--lh); color:#4a4640; }
+.date::before{ content:'Date:\00a0\00a0'; }
+.date::after{ content:'\00a0\2665'; color:#3156d3; font-size:.9em; }
+.page.R .date{ text-align:right; }
+
+.title{ font-family:'Caveat','Patrick Hand',cursive; font-weight:700; font-size:1.75em; line-height:calc(var(--lh) * 2);
+  text-align:center; text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:.1em; }
+.title::before, .title::after{ content:'\2665'; display:inline-block; text-decoration:none; font-size:.4em; color:#e0245e; margin:0 1em; vertical-align:middle; }
+
+.sign{ font-family:'Caveat','Patrick Hand',cursive; font-size:1.2em; }
+.wavy{ text-decoration:underline wavy; text-decoration-thickness:1.5px; text-underline-offset:.22em; }
+.hrt{ color:#e0245e; font-size:.9em; }
+
+/* ink colours */
+.ink-blue{ color:#25479f; }   .ink-red{ color:#c22350; }    .ink-green{ color:#1d7544; }
+.ink-orange{ color:#d56d12; } .ink-purple{ color:#5b36a6; } .ink-pink{ color:#d4237c; }
+.ink-indigo{ color:#4527a0; } .ink-black{ color:#25221f; }
+
+/* photos: text apne aap in ke gird adjust ho jata hai (float) */
+.photo{ display:block; float:right; width:7.8em; height:10.2em; object-fit:cover; background:#fff;
+  padding:.35em .35em 1em; margin:.1em 0 .7em .9em; transform:rotate(2.5deg); shape-margin:.3em;
+  box-shadow:0 3px 9px rgba(0,0,0,.38), 0 0 0 1px rgba(0,0,0,.06); }
+.photo.left{ float:left; margin:.1em .9em .7em 0; transform:rotate(-2.5deg); }
+.photo.big{ width:10em; height:13em; }
+.photo.small{ width:6em; height:7.6em; }
+.photo.wide{ width:11em; height:8em; }
+
+/* doodles (dil, phool, lavender) - position inline style se */
+.doodle{ position:absolute; z-index:0; display:block; background-repeat:no-repeat; background-size:contain; pointer-events:none; }
+.doodle.flower{ width:60px; height:92px; background-image:var(--d-flower); }
+.doodle.lavender{ width:70px; height:120px; background-image:var(--d-lav); }
+.doodle.heart{ width:52px; height:48px; background-image:var(--d-heart); }
+.doodle.hearts{ width:90px; height:70px; background-image:var(--d-hearts); }
+
+/* hint + buttons */
+#hint{ position:fixed; z-index:10; left:0; right:0; bottom:10px; text-align:center; color:#f0dcb0; font-size:16px; opacity:.85; transition:opacity 1.2s; pointer-events:none; text-shadow:0 1px 3px #000; }
+#hint.gone{ opacity:0; }
+.nav{ position:fixed; z-index:10; bottom:12px; width:42px; height:42px; border-radius:50%; border:1px solid rgba(255,230,170,.35);
+  background:rgba(20,12,6,.55); color:#f0dcb0; font-size:24px; line-height:38px; cursor:pointer; }
+.nav:hover{ background:rgba(60,35,14,.8); }
+#bPrev{ left:14px; } #bNext{ right:14px; }
+
+
+/* =========================================
+   RESPONSIVE DIARY DESIGN
+   ========================================= */
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+#scene {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+#stage {
+  flex-shrink: 0;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+#book {
+  transform-origin: left center;
+}
+
+.page {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.photo {
+  max-width: 100%;
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+  #hint {
+    font-size: 12px;
+    bottom: 7px;
+    padding: 0 45px;
+  }
+
+  .nav {
+    width: 36px;
+    height: 36px;
+    font-size: 21px;
+    line-height: 32px;
+    bottom: 8px;
+  }
+
+  #bPrev {
+    left: 6px;
+  }
+
+  #bNext {
+    right: 6px;
+  }
+}
+
+/* Larger mobile and small tablets */
+@media (min-width: 481px) and (max-width: 900px) {
+  #hint {
+    font-size: 14px;
+  }
+}
+
+/* Tablets and landscape phones */
+@media (max-height: 600px) {
+  #hint {
+    bottom: 3px;
+    font-size: 12px;
+  }
+
+  .nav {
+    bottom: 4px;
+  }
+}
+
+/* Prevent accidental text selection */
+#scene,
+#book,
+.leaf {
+  -webkit-user-select: none;
+  user-select: none;
+}
+</style>
+</head>
+
+<body>
+  <h1>Wait</h1>
+</body>
+</html>
