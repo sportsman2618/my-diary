@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neesa's Diary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Great+Vibes&family=Patrick+Hand&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   STYLE  (design). Zyada tar yaha kuch change karne ki zaroorat nahi.
+   ===================================================================== */
+:root{ --PW:560px; --PH:760px; }
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ height:100%; overflow:hidden; }
+body{
+  font-family:'Patrick Hand','Comic Sans MS',cursive;
+  background-color:#6b3b19;
+  background-image:
+    radial-gradient(ellipse 75% 65% at 50% 45%, rgba(255,196,120,.28), transparent 72%),
+    var(--wood);
+  background-size:auto, cover;
+  -webkit-text-size-adjust:100%;
+}
+/* table vignette */
+body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 45%, transparent 42%, rgba(0,0,0,.62) 100%); }
+
+/* ---------- table decorations ---------- */
+.plant{ position:fixed; z-index:2; pointer-events:none; }
+.plant i{ position:absolute; display:block; width:90px; height:46px;
+  background:linear-gradient(135deg,#4f9a45,#1f5f2c); border-radius:0 100% 0 100%;
+  box-shadow:0 6px 12px rgba(0,0,0,.4); transform-origin:left bottom; }
+.lamp{ position:fixed; z-index:2; top:-36px; right:-26px; width:150px; height:180px; pointer-events:none;
+  border-radius:26px; color:#fff3c4; font-size:30px; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 50% 58%, #ffe3a0 0, #ffae3f 30%, #7a3f0b 68%, #1a1109 100%);
+  box-shadow:0 0 150px 80px rgba(255,150,40,.32), inset 0 0 0 7px #16221f; text-shadow:0 0 12px #ffd37a; letter-spacing:14px; }
+.pen{ position:fixed; z-index:2; right:-190px; top:46%; width:380px; height:24px; pointer-events:none;
+  transform:rotate(-100deg); border-radius:12px;
+  background:linear-gradient(180deg,#3a3a3a,#050505 45%,#161616);
+  box-shadow:6px 10px 18px rgba(0,0,0,.6); }
+.pen::before{ content:''; position:absolute; left:70px; top:0; bottom:0; width:12px; background:linear-gradient(180deg,#f5de8f,#a77c1d); }
+.pen::after{ content:''; position:absolute; left:-34px; top:3px; width:36px; height:18px; background:linear-gradient(180deg,#e9cd7b,#9a7418);
+  clip-path:polygon(100% 0,100% 100%,0 50%); }
+
+/* ---------- scene / book ---------- */
+#scene{ position:fixed; inset:0; z-index:5; display:grid; place-items:center; cursor:pointer;
+  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; }
+#stage{ width:var(--PW); height:var(--PH); transition:transform 1s cubic-bezier(.4,.1,.2,1); }
+#book{ position:relative; width:100%; height:100%; transition:transform 1s cubic-bezier(.4,.1,.2,1); }
+
+/* dark green hard cover frame visible behind open spread */
+#mat{ position:absolute; z-index:0; pointer-events:none;
+  left:calc(var(--PW) * -1 - 14px); top:-14px; width:calc(var(--PW) * 2 + 28px); height:calc(var(--PH) + 28px);
+  background-color:#0b3a34; background-image:var(--grain), linear-gradient(135deg,#124840,#082824);
+  border-radius:14px; opacity:0; transition:opacity .7s;
+  box-shadow:0 34px 70px rgba(0,0,0,.72), 0 6px 14px rgba(0,0,0,.5), inset 0 0 0 2px rgba(255,255,255,.05); }
+#ribbon{ position:absolute; z-index:1; left:-7px; top:calc(var(--PH) + 8px); width:14px; height:56px; opacity:0; transition:opacity .7s;
+  background:linear-gradient(90deg,#10503a,#22835d,#10503a); clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%); }
+#book.open #mat, #book.open #ribbon{ opacity:1; }
+
+.leaf{ position:absolute; inset:0; transform-origin:left center; transform-style:preserve-3d;
+  transform:perspective(2600px) rotateY(0deg); transition:transform 1.1s cubic-bezier(.45,.05,.25,1); }
+.leaf.flipped{ transform:perspective(2600px) rotateY(-180deg); }
+.face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+.face.back{ transform:rotateY(180deg); }
+
+/* ---------- covers (black leather) ---------- */
+.face.cover{ background-color:#0b0b0c;
+  background-image:var(--grain), radial-gradient(ellipse at 30% 18%, #2e2e31, #121214 55%, #060607);
+  box-shadow:0 30px 60px rgba(0,0,0,.7), 0 4px 10px rgba(0,0,0,.6), inset 0 0 0 2px rgba(255,255,255,.05);
+  inset:-10px -10px -10px -4px; border-radius:6px 16px 16px 6px; }
+.face.cover.back{ inset:-10px -4px -10px -10px; border-radius:16px 6px 6px 16px; }
+.face.cover::before{ content:''; position:absolute; inset:30px 28px 30px 52px; border:2px dashed rgba(214,176,86,.4); border-radius:6px; pointer-events:none; }
+.face.cover.back::before{ inset:30px 52px 30px 28px; }
+.cover-art{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 70px; }
+.spine-band{ position:absolute; top:0; bottom:0; left:0; width:34px; background:linear-gradient(90deg,#000,#1d1d20 70%,#0a0a0b); border-right:1px solid rgba(255,255,255,.07); border-radius:6px 0 0 6px; }
+.face.back .spine-band{ left:auto; right:0; transform:scaleX(-1); border-radius:0 6px 6px 0; }
+.gold{ background:linear-gradient(135deg,#f7e6a6,#cfa443 40%,#8a6a1f 58%,#f2dc8d); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; filter:drop-shadow(0 2px 2px rgba(0,0,0,.7)); }
+.c-title{ font-family:'Great Vibes','Caveat',cursive; font-size:96px; line-height:1.05; }
+.c-orn{ font-size:34px; margin:14px 0 10px; }
+.c-sub{ font-size:19px; letter-spacing:5px; text-transform:uppercase; line-height:1.7; }
+.c-year{ font-size:20px; letter-spacing:8px; margin-top:34px; }
+
+/* ---------- paper pages ---------- */
+.page{ position:absolute; inset:0; overflow:hidden; --fs:23px; --lh:32px; --top:56px;
+  background-color:#f5ead0;
+  background-image:
+    var(--paper),
+    linear-gradient(to bottom, transparent calc(var(--lh) - 7px), rgba(88,118,170,.42) calc(var(--lh) - 7px), rgba(88,118,170,.42) calc(var(--lh) - 6px), transparent calc(var(--lh) - 6px)),
+    radial-gradient(ellipse at 50% 50%, rgba(255,250,235,.55), rgba(190,150,90,.16) 100%);
+  background-size:300px 300px, 100% var(--lh), 100% 100%;
+  background-position:0 0, 0 var(--top), 0 0;
+  box-shadow:inset 0 0 46px rgba(150,100,40,.18); }
+.page.L{ border-radius:10px 3px 3px 10px; --ml:72px; --rl:50px; }
+.page.R{ border-radius:3px 10px 10px 3px; --ml:54px; --rl:32px; }
+.page::before{ content:''; position:absolute; top:0; bottom:0; left:var(--rl,40px); width:1px; background:rgba(214,64,70,.55); pointer-events:none; }
+.page::after{ content:''; position:absolute; inset:0; pointer-events:none; }
+.page.R::after{ background:linear-gradient(90deg, rgba(70,40,10,.42), rgba(70,40,10,.14) 5%, rgba(70,40,10,0) 15%), linear-gradient(270deg, rgba(0,0,0,.10), transparent 4%); }
+.page.L::after{ background:linear-gradient(270deg, rgba(70,40,10,.42), rgba(70,40,10,.14) 5%, rgba(70,40,10,0) 15%), linear-gradient(90deg, rgba(0,0,0,.10), transparent 4%); }
+
+.inner{ height:100%; padding:var(--top) 36px 44px var(--ml,54px); font-size:var(--fs); line-height:var(--lh); overflow:hidden; }
+.inner > *:not(.doodle){ position:relative; z-index:1; }
+.page p{ margin:0 0 var(--lh); text-shadow:0 0 .6px currentColor; }
+.pno{ position:absolute; right:42px; bottom:18px; font-size:15px; color:#5a5148; z-index:2; }
+
+.date{ font-size:.74em; line-height:var(--lh); color:#4a4640; }
+.date::before{ content:'Date:\00a0\00a0'; }
+.date::after{ content:'\00a0\2665'; color:#3156d3; font-size:.9em; }
+.page.R .date{ text-align:right; }
+
+.title{ font-family:'Caveat','Patrick Hand',cursive; font-weight:700; font-size:1.75em; line-height:calc(var(--lh) * 2);
+  text-align:center; text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:.1em; }
+.title::before, .title::after{ content:'\2665'; display:inline-block; text-decoration:none; font-size:.4em; color:#e0245e; margin:0 1em; vertical-align:middle; }
+
+.sign{ font-family:'Caveat','Patrick Hand',cursive; font-size:1.2em; }
+.wavy{ text-decoration:underline wavy; text-decoration-thickness:1.5px; text-underline-offset:.22em; }
+.hrt{ color:#e0245e; font-size:.9em; }
+
+/* ink colours */
+.ink-blue{ color:#25479f; }   .ink-red{ color:#c22350; }    .ink-green{ color:#1d7544; }
+.ink-orange{ color:#d56d12; } .ink-purple{ color:#5b36a6; } .ink-pink{ color:#d4237c; }
+.ink-indigo{ color:#4527a0; } .ink-black{ color:#25221f; }
+
+/* photos: text apne aap in ke gird adjust ho jata hai (float) */
+.photo{ display:block; float:right; width:7.8em; height:10.2em; object-fit:cover; background:#fff;
+  padding:.35em .35em 1em; margin:.1em 0 .7em .9em; transform:rotate(2.5deg); shape-margin:.3em;
+  box-shadow:0 3px 9px rgba(0,0,0,.38), 0 0 0 1px rgba(0,0,0,.06); }
+.photo.left{ float:left; margin:.1em .9em .7em 0; transform:rotate(-2.5deg); }
+.photo.big{ width:10em; height:13em; }
+.photo.small{ width:6em; height:7.6em; }
+.photo.wide{ width:11em; height:8em; }
+
+/* doodles (dil, phool, lavender) - position inline style se */
+.doodle{ position:absolute; z-index:0; display:block; background-repeat:no-repeat; background-size:contain; pointer-events:none; }
+.doodle.flower{ width:60px; height:92px; background-image:var(--d-flower); }
+.doodle.lavender{ width:70px; height:120px; background-image:var(--d-lav); }
+.doodle.heart{ width:52px; height:48px; background-image:var(--d-heart); }
+.doodle.hearts{ width:90px; height:70px; background-image:var(--d-hearts); }
+
+/* hint + buttons */
+#hint{ position:fixed; z-index:10; left:0; right:0; bottom:10px; text-align:center; color:#f0dcb0; font-size:16px; opacity:.85; transition:opacity 1.2s; pointer-events:none; text-shadow:0 1px 3px #000; }
+#hint.gone{ opacity:0; }
+.nav{ position:fixed; z-index:10; bottom:12px; width:42px; height:42px; border-radius:50%; border:1px solid rgba(255,230,170,.35);
+  background:rgba(20,12,6,.55); color:#f0dcb0; font-size:24px; line-height:38px; cursor:pointer; }
+.nav:hover{ background:rgba(60,35,14,.8); }
+#bPrev{ left:14px; } #bNext{ right:14px; }
+</style>
+</head>
+
+<body>
+
+<!-- table decorations -->
+<div class="plant" style="top:-6px;left:-6px;width:160px;height:160px">
+  <i style="left:10px;top:30px;transform:rotate(18deg)"></i>
+  <i style="left:6px;top:70px;transform:rotate(55deg);width:110px"></i>
+  <i style="left:30px;top:6px;transform:rotate(-12deg);width:80px"></i>
+</div>
+<div class="lamp">&#9733;&#9733;</div>
+<div class="pen"></div>
+
+<!-- Diary yaha dikhti hai -->
+<div id="scene">
+  <div id="stage">
+    <div id="book">
+      <div id="mat"></div>
+      <div id="ribbon"></div>
+    </div>
+  </div>
+</div>
+
+<div id="hint">Click on the diary to open it &nbsp;&bull;&nbsp; to turn page , click on left or right side of page  </div>
+<button class="nav" id="bPrev" aria-label="Previous">&lsaquo;</button>
+<button class="nav" id="bNext" aria-label="Next">&rsaquo;</button>
+
+
+<!-- =====================================================================
+     ==========  DIARY KA CONTENT (yaha se text change karo)  ============
+     ===================================================================== -->
+<div id="source" style="display:none">
+
+  <!-- ================= 1) FRONT COVER KA TEXT (band diary ke upar) ================= -->
+  <div id="cover-front" class="cover-art">
+    <div class="spine-band"></div>
+    <div class="c-title gold" style="font-family: 'Times New Roman', Times, serif;"">For Aashi</div>               <!-- <- Bara title -->
+    <div class="c-orn gold">&#10086;</div>
+    <div class="c-sub gold">Just Some  Random<br>&middot; Thoghts &middot;</div>   <!-- <- Chota text -->
+    <div class="c-year gold">2026</div>                    <!-- <- Saal / naam -->
+  </div>
+
+  <!-- ================= 2) BACK COVER KA TEXT (diary khatam hone par) ================= -->
+  <div id="cover-back" class="cover-art">
+    <div class="spine-band"></div>
+    <div class="c-orn gold" style="font-size:54px">&#10047;</div>
+    <div class="c-sub gold">The End<br>&mdash; for now &mdash;</div>
+  </div>
+
+  <!-- ================= 3) PAGES ================= -->
+  <!--
+    HAR <article class="page"> = diary ka EK page (aik taraf).
+    Page 1 = left, Page 2 = right, Page 3 = left, Page 4 = right ... (khud ba khud).
+    Naya page add karna ho to neeche kisi bhi page ka poora block
+    <article class="page"> ... </article> COPY karke is list ke END me
+    ("PAGES KHATAM" wale comment se pehle) paste kar do. Bas.
+    Page numbers aur left/right apne aap lag jate hain.
+    Agar pages ki ginti taaq (odd) ho to aakhri me khali page khud lag jata hai.
+
+    PHOTO lagane ke liye:  <img class="photo right" src="photo.jpg">
+        class="photo right"  -> photo right side, text left me
+        class="photo left"   -> photo left side, text right me
+        size ke liye add karo: small / big / wide   (e.g. "photo left small")
+        Photo ko title ke baad ya kisi bhi paragraph se pehle rakho,
+        text uske aas paas khud adjust ho jayega.
+        PHOTO NA LAGAO to us page par poora text hi hoga.
+    Photo file isi HTML file wale folder me rakho, aur src me uska naam likho.
+
+    Text ka rang: ink-blue ink-red ink-green ink-orange ink-purple ink-pink ink-black
+    Dil: <span class="hrt">&#9829;</span>      Smile: &#9786;
+    Dil/phool ke doodle: <i class="doodle flower" style="right:60px;bottom:70px"></i>
+        types: flower, lavender, heart, hearts
+    Agar text page se zyada ho jaye to font apne aap thora chota ho jata hai.
+  -->
+  <div id="pages">
+
+    <!-- ########## PAGE 1 (left) ########## -->
+    <article class="page">
+      <div class="date">25 Oct 2026</div>
+
+
+      <br>      
+
+      <p class="sign ink-pink"><span style="font-weight: bold;"">Assalam-o-Alaikum!</span> <span class="hrt">&#9829;</span></p>
+
+      <p class="ink-blue">Tum soch rahi ho gi keh mae na es me kia likha ho ga ya q likha ho ga . </p>
+      <p class="ink-black"> Kafi waqt beeet gia tum sa na sahi sa bat ho ski , na kuch sahi sa poch saka , na kch bata ska . <br> Waqt ki kharabi the , Ghalat fehmio ka samandar , gussa tha ya Umeedo ka pora na hona . Ap keh ab rahi the keh door a gae . But jb start hoi hmari bat kch dino tk mae na tumha phla jesa banany ki bhapor koshesh ki but kamyab ni hoa to mujha laga keh mae kamyab ni ho skta es me  &#9786;  <span class="hrt"></span></p>
+      <p class="ink-green">Kon kaha ghalat hai kaha thek hai en bato ka peechy bhag bhag kar had sa ziada ghalat fehmia pal li the hm na . Bhot Umeedy lagi hoi the kch toti to phr ni pata chala kia ghalat ho rha kia sahi  &#9786; <br> Mera ya diary likhna ki aik sab sa bara maqsad tumha btana bhe hai keh mujha tum sa koi Gila nahi Neesa &#128153; <br> Aor ya mae dill sa keh rha . Jo hoa jesa hoa meri bhe bht ghaltia os me . Lakin kb tk serf dosry ko ghalat kehna ki koshesh <br> me rahain gy . Jitna hum ghalti pa kesi ko blame <br> krty hai otna hum kbhe os ki achaio pa ni sarahty .</p>
+      <i class="doodle flower" style="right:70px;bottom:78px"></i>
+    </article>
+
+    <!-- ########## PAGE 2 (right) ########## -->
+    <article class="page">
+      <div class="date">26 Oct 2026</div>
+     
+      <img class="photo right big" src="First.jpg" alt="photo">
+      <p class="ink-blue">To mae na socha keh aj es Diary me manfi bato ko chor ka Kuch musbat likhoo . Wo likho jen pa mujha tumhara shukar guzar hona chahia , Wo likho jes me tm na mera sath dia , Wo likho jo hm na achi yady bnae , Wo likho jo lamhy mae yad karta akser , Wo likho jes me sawal na  hon , Wo likho jes me qasooor na likhy hoe hon , Wo likho jes me khaloos ho aor wo likho jo mae dill sa likho  &#128153; <br> </p>
+      <p class="ink-orange">Har insan ka apna masly hoty , Apna dukh apni preshaniaaa . Aor ya bhee sach hai keh jo face kr rha hota actual me wo he samjh sakta keh wo kesy kr rha . Wo masly phr tumhary hon  , mery hon ya kesi bhe insan ka . Masly hmesha preshani laty hai , demaghi sakon chala jata , dabao barh jata aor ya sary chezy yaqinan dunia ka har isnan ka sath hoti rehti hain . </p>
+      <p class="ink-purple">Tum pa bhe mushkil waqt aya jes me mae tumhary sath ni tha . mery sath bhe esy kafi mamlat pesh ae jen me mera bojh halka krna wala koi ni tha . On ki waja sa phr kafi chezy kharab ho gy . </p>
+      <p class="ink-black"> Phr mae na socha keh masly to hmesha rehty hain . Agr koi sath dy to os ka shukr gzar hona chahia aor agr koi na dy pae to os sa khafa hony ki bhe zrorat ni  &#9786;</p>
+      <p class="sign ink-purple"><span class="wavy">Keep going...</span> <span class="hrt">&#9829;</span></p>
+    </article>
+
+
+<!-- ########## PAGE 3 (left) ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+
+
+      <br>      
+
+      <h2 style="text-align: center; color: indianred;" >Dear Neesu</span> <span class="hrt">&#9829;</span></h2>
+
+      <p class="ink-blue"> Hamari dosti ko koi bht ziada arsa nahi guzer gia . Yahi koi aik sal ya os sa chand month ziada .  </p>
+            <img class="photo left" src="group.jpg" alt="photo">
+       <p class="ink-black">Normal aik group friendship sa kab ak achi dosti ho gy pata he ni chala . but bht he acha waqt guzra , Yaqeenan bht he achi yadain hain . mae akser yad bhe krta on sab bato ko ya jb kbhe on jagho pa jata jaaha hm sath gy thy . aor ya mae khud krta jan bojh kar keh mujha acha lgta .    &#9786;  <span class="hrt"></span></p>
+      <img class="photo right small" src="third.jpg" alt="photo">
+
+       <p class="ink-green">Ap ka sath har bat share krna ki adat the aik hosla sa mil jata tha . jb khatam hoi bat hona ya kum hoi to esy kafi baty hoi jen me support chahia the kesi ki , esa ni hai keh koi tha he ni tb share krna ko . Log to bht sary thy but kesi sa share krna ka dill ni kra . &#9786; <br> .</p>
+       <p class="ink-red"> Phir os ka nuksan ya hoa keh esy log enter hoe life me aor chah kr bhe ni nikal pa rha tha , G bhar ka nuksan kia apna . es ka alawa bhe kafi kch hoa but cover ho gy kch , kch reh bhe gae hain to ho jae gi <br> Mae na jb ya sara kch likhna start kia kch din ho gy es bat ko tb bhe mera ya likhna ka iarada ya ni tha keh tm sa phla wala behavior mango . mae bs kch ghalat fehmia door krna chah rha tha and ya btana ka lia keh ap sa koi shikwa ni mjha , thy bhe to ni hain ab aor ni hon gy . kch logo ka lia dill ko sakhiii kr dia jata aor mae na tumhary lia apna dill sakhi kr dia .   .</p>
+
+            <i class="doodle heart" style="right:56px;bottom:66px"></i>
+
+    </article>
+
+
+     <!-- ########## PAGE 4 (left)  --  ISME PHOTO NAHI, POORA PAGE TEXT ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <p class="ink-blue">Sakhi kar dany sa ya ni murad keh mujha kbhe kch bura ni lagy ga ya koi shikwa ni ho ga . Obv wo to insan hon agr esa kch hoa to bura bhe lg skta shikwa bhe ho skta . <br> But InshaAllah mae os pa nomral rehna ya compromise krna ki koshesh kro ga Mean ya keh ap ko mera gussa , ajeeb baty , gily shikway , reaction aor esy kafi chezy ni dekhy gi aor ya bat kehna bazat e khud koi reaction ni hai .   </p>
+      <p class="ink-black">Han albata agr ap jan bojh kar esa kch boly ya kary jo ap ko pata bhe ho keh gheer munasib bat ya koi esa amal jo na acha lgta ho to wo bura to lgy ga he dill me bhe reh jae maybe . <br> Ap enjoy kry apni life . mery zrorat pary kahi bhe uni ka mamalat hon ya bahir koi to mae apni traf sa jo bhe ho skta hoa zror kro ga . Jo na ho skta hoa wo phr majbori . and mery pass shaktia ni hain jo mujha a ka inform kry agr ap ko koi bat krni hoti to ap sedha bol dia kry . offline agr hon mae to mean so rha hon aor ap phla bta dia kry ya number pa call kr lia kry . <br> </p>
+
+      <p class="ink-orange"> Phla es me mae na kch pages add kia hoe thy on bato ka jo hm na achi yady bnae ya wo chezy mae yad krta rehta but aj mae na wo pages del kia es me sa ap ka msg ka bad keh i wanna forget the past . To mae na socha mae bhe esy koi baty recall na krwaon . Es lia mae na wo part he nikal diya es me sa . 
+
+
+</p>
+    </article>
+
+
+
+
+    <!-- ########## PAGE 5 (left)  --  ISME PHOTO NAHI, POORA PAGE TEXT ########## -->
+    <article class="page">
+      <div class="date">28 Oct 2026</div>
+      <h2 class="title ink-indigo">Main shukar guzar hon</h2>
+      <p class="ink-blue">Har os koshesh ka lia jo ap na meri help ka lia ki <br> Har os harf ka lia jes sa ap na mujha ezat di <br> Har os jumlay ka lia jes me mujha Ehmiyat di <br> Har os lamhy ka jes me ap mery sath the </p>
+      <p class="ink-black">Har os din ka lia jes me mery lia waqt nikala <br> Har os nawaly ka lia jo hm na sath khae <br> Har os musafat ka lia Jes me hm sath chaly <br> Har os call ka lia Jo mujha jgany ka lia ap na ki <br> Har os bat ka lia Jes sa mujha apniyat ka ehsas hoa
+<br> Har os alarm ka lia Jo any case me mery lia lga ka ap othi 
+
+
+  <span class="hrt">&#9829;</span></p>
+      <p class="ink-green">Har os Khushi ka lia Jo mujha ap ki sa ya apki waja sa mili <br> Har os ghari ka lia Jes me ap mery lia fiker-mand hoi <br> Har os wazahat ka lia Jo mujha itmad me lany ka lia ap na di 
+
+ 
+
+</p>
+      <p class="ink-orange">Har os wazahat ka lia Jo mujha itmad me lany ka lia ap na di <br> Har os raz ka lia Jes me mujha Hamraz bnaya <br> Har os zid ka lia Jo mazeed kch waqt bitany ka li ki <br>
+
+
+</p>
+    </article>
+
+    <!-- ########## PAGE 6 (right)  --  photo LEFT side ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <img class="photo left" src="second.jpg" alt="photo">
+      <p class="ink-green">Har os jagah ka lia jaha hm sath gy <br> Har os Mazak ka lia Jes me ham hansy. <br>Har os waqt ka lia jab hum ne waqt ka khayal hi nahi rakha. <br> Har os baat ka lia jis par humari soch aik jesi nikli <br> </p>
+      <p class="ink-red">Har us mauqy ka lia jab ap ne meri baat ko tawajjo se suna <br> Har us mashwary ka lia jis mein ap ne meri behtari sochi <br> Har us sawal ka lia jis se ap ne meri pareshani ki wajah jan’ni chahi <br> Har us dafa ka lia jab ap ne meri pasand ka khayal rakha  <span class="hrt">&#9829;</span></p>
+      <p class="ink-blue">  Har os achi adat ka lia jo mae na ap sa sekhi <br> Har os lamhy ka lia jab ap na mujha akela mehsoos nahi honay dia</p>
+      <p class="ink-purple"> Har os support ka lia jo ap na mushkil <br>  waqt ma mera kia<br> Har os bharosay ka lia jo ap na mujh par kia <br> Aor har os baat ka lia jo mae yaha ni likh saka </p>
+      <i class="doodle flower" style="right:60px;bottom:72px"></i>
+    </article>
+ 
+
+
+
+
+    <!-- ########## PAGE 7 (left)  --  do photos ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <h2 class="title ink-purple">Mae mazrat khawah hon</h2>
+      <img class="photo right" src="mine.jpg" alt="photo">
+      <p class="ink-purple">Har os baat ka lia jis na ap ka dil dukhaya <br> Har os rawaiye ka lia jis sa ap ko takleef hoi <br>  Har os baar ka lia jab ap ki baat samajhny ma dair ki <br> </p>
+      <p class="ink-blue">Har os baar ka lia jab ap ki baat ko ghalat samjha <br> Har os mauqy ka lia jab ap ki umeed par poora nahi utra   <br> Har os baar ka lia jab ap ko meri wajah sa safai deni pari <br> Har os baar ka lia jab ap ki pareshani ko samajh nahi saka <br> </p>
+      <img class="photo left small" src="six.png" alt="photo">
+      <p class="ink-red">Har os lamhy ka lia jab ap ko meri baat buri lagi <br> Har os ghalti ka lia jo mujh sa baar baar hoi <br> Har os baar ka lia jab main ap ki baat ko ahmiyat nahi de saka <br></span></p>
+      <p class="ink-green">Har os mauqy ka lia jab mujha ap ka sath dena chahia tha <br> Har os baat ka lia jo main gussay ma keh gaya <br> Har os ehsas ka lia jisay main samajhny ma nakam raha   </p>
+
+      </article>
+
+
+         </article>
+
+    <!-- ########## PAGE 8 (right)  --  photo LEFT side ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <p class="ink-green">Har os haq ka lia jo ap ka tha magar main ada nahi kar saka <br> Har os baar ka lia jab ap ko meri wajah sa takleef hoi <br>  Har os baar ka lia jab ap ko meri wajah sa mayoosi hoi <br> Har os gham ka lia jis ki waja mae bana <br> Har os aansu ka lia jo meri sy baha <br> Har os baat ka lia jo ap dil ma rakh kar khamosh rahi </p>
+      <p class="ink-red">Har os takleef ka lia jis ka mujha andaza tak na ho saka <br> Har os lamhy ka lia jab ap ko meri taraf sa behtar rawaiye ki umeed thi <br> Har os waaday ka lia jo main poora nahi kar saka </p>
+      <p class="ink-blue">  Har os din ka lia jb ap ka maaan tora <br> Har os baar ka lia jab ap ki baat samajhny ma dair ki <br> Har os faislay ka lia jis mein main ap ki rai bhool gaya <br> Har os baar ka lia jab main ap ki baat kaat gaya <br> </p>
+      <p class="ink-purple">Har os zimmedari ka lia jo main theek sa nibha nahi saka <br> Har os din ka lia jb ap ki mojodgi me bhe kesi aor ko importance di <br> Har os lamhy ka lia jab main ap ki jagah khud ko rakh kar nahi soch saka <br> Har os baar ka lia jab main ap ki niyat par ghalat soch baitha  </p>
+    </article>
+ 
+ <!-- ########## PAGE 9 (left)  --  do photos ########## -->
+    <article class="page">
+      <div class="date">29 Oct 2026</div>
+      <p class="ink-black">Har os baar ka lia jab main ap ki pareshani mein mazeed izafa kar gaya <br> Har os baat ka lia jis mein main ap ka bharosa jeet nahi saka <br> Har os mauqy ka lia jab main ap ki jagah apni ana ko ahmiyat de gaya <br> Har os judgement ka lia jes me mae na ap ki side ni suni  </p>
+      <p class="ink-blue"> Har ap ki os zid ka lia jo mae pori ni kr saka <br> Har ap ki os khawaish ka lia jes ki takmeel ni ki <br> Har ap ka os felsa ka lia jes ka ehtram ni kia <br>  </p>
+      <img class="photo right" src="sorry.jpg" alt="photo">
+      <p class="ink-red">  Har os lamhy ka lia jab main ne ap ki jagah apni sahulat ko chuna <br>  Har os khulooos ka lia jisay main ne apni laparwahi se nazar-andaz kia <br> <br>  Aor har os bat ka lia jes ki mazrat mae aj ni likh ska  &#128591; <br></span></p> <br> 
+            <p class="ink-orange">En sab bato ka lia dill sa mazrat &#128532; <br> <br> Ya sab baty mae es lia ni kr rha keh ap ka aj ya msg ae , ya sab to mae na phla he likhna tha ap fasla lany ka decision kry ya phla jesa hona ka ya likhna ka kafi time sa decide ho chuka tha final aj hoa </span></p>
+
+
+      </article>
+
+
+    <!-- ########## PAGE 10 (right)  --  aakhri page ########## -->
+    <article class="page">
+      <div class="date">30 Oct 2026 </div>
+      <h2 class="title ink-pink">Thank You</h2>
+                  <img class="photo left" src="thanks.jpg" alt="photo">
+
+      <p class="ink-blue">Thanks again for everything . Guzry waqt ka har aik lamhay ka lia . <br> Allah pak ap ko Hmesha khush rakhy aor kamyabia ata kry . <br> Ap ki tamam naik khawaishat pori kry <br> Aor ap ko tamam preshanio , mushkilat , dukho , taqleefo , udasio , zakhmoo , dhoky , hasad , nafrat , Riya karii , aor napak iraado sa mehfooz rakhy &#129293; Ameen &#128140; </p>
+
+      <p class="ink-red">Ap ka fesla sar ankho pa abhe aj rat jo ap ka msgs thy . Mjha os me sa kch bhe bura ni lga . Ap ki life hai ap ko haq hai pora jo bhe fesla lain . <br> Mujha os me sa kch bhe bura lgna banta bhe ni .  <span class="hrt">&#9829;</span></p>
+      <p class="ink-green">Meri traf sa ap ko kbhe koi shikayat ni ho gi inshaAllah . <br> And i am here jb bhe meri zrorat pry . Just call me . </p>
+      <p class="sign ink-purple"><span class="wavy">Fi Aman Allah</span> <span class="hrt">&#9829;</span></p>
+      <i class="doodle lavender" style="right:50px;bottom:70px"></i>
+    </article>
+
+    <!-- >>>> Naya page yaha PASTE karo (upar wale kisi page ka block copy karke) <<<< -->
+
+  </div>
+  <!-- ========================  PAGES KHATAM  ======================== -->
+</div>
+
+
+<!-- =====================================================================
+     SCRIPT (diary ko chalane wala code) - isme kuch change karne ki zaroorat nahi
+     ===================================================================== -->
+<script>
+(function(){
+  var PW = 560, PH = 760;
+  var $ = function(s){ return document.querySelector(s); };
+
+  /* ---------- generated textures & doodles ---------- */
+  var url = function(s){ return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(s) + '")'; };
+  var rs = document.documentElement.style;
+  var NS = "xmlns='http://www.w3.org/2000/svg'";
+
+  rs.setProperty('--grain', url("<svg "+NS+" width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .2 0'/></filter><rect width='100%' height='100%' filter='url(#n)'/></svg>"));
+  rs.setProperty('--paper', url("<svg "+NS+" width='300' height='300'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .34  0 0 0 0 .14  0 0 0 .5 -.14'/></filter><rect width='100%' height='100%' filter='url(#p)'/></svg>"));
+  rs.setProperty('--wood', url("<svg "+NS+" width='1000' height='700'><filter id='w'><feTurbulence type='fractalNoise' baseFrequency='.004 .2' numOctaves='4' seed='7'/><feColorMatrix values='0 0 0 0 .16  0 0 0 0 .07  0 0 0 0 .02  0 0 0 1.3 -.3'/></filter><rect width='100%' height='100%' filter='url(#w)'/></svg>"));
+
+  var petals = '';
+  for (var i = 0; i < 8; i++) petals += "<ellipse cx='30' cy='17' rx='5' ry='10' transform='rotate(" + (i*45) + " 30 30)'/>";
+  rs.setProperty('--d-flower', url("<svg "+NS+" viewBox='0 0 60 92'><path d='M30 38 C31 58 28 74 25 90' stroke='#3f8f55' stroke-width='2.6' fill='none' stroke-linecap='round'/><path d='M28 70 C18 62 11 66 10 73 C19 77 26 75 28 70Z' fill='none' stroke='#3f8f55' stroke-width='2'/><g fill='#fff' stroke='#8d4fb4' stroke-width='1.8'>" + petals + "</g><circle cx='30' cy='30' r='6.5' fill='#f4b92c' stroke='#8d4fb4' stroke-width='1.5'/></svg>"));
+
+  var lav = '';
+  [[16,20],[35,6],[54,20]].forEach(function(e, idx){
+    lav += "<path d='M35 112 L" + e[0] + " " + e[1] + "' stroke='#5f8f4a' stroke-width='2' fill='none'/>";
+    for (var k = .3, n = 0; k <= 1.001; k += .075, n++){
+      var x = 35 + (e[0]-35)*k, y = 112 + (e[1]-112)*k, o = (n%2 ? 3.2 : -3.2);
+      lav += "<ellipse cx='" + (x+o) + "' cy='" + y + "' rx='2.8' ry='4.6' fill='#7b5cc4' stroke='#4b3590' stroke-width='.5'/>";
+    }
+  });
+  rs.setProperty('--d-lav', url("<svg "+NS+" viewBox='0 0 70 120'>" + lav + "<path d='M35 92 C18 80 18 102 35 92 C52 80 52 102 35 92Z' fill='none' stroke='#d6336c' stroke-width='2.4'/><path d='M35 92 L28 114 M35 92 L42 114' stroke='#d6336c' stroke-width='2.2' fill='none'/></svg>"));
+
+  var hp = "<path d='M25 43 C-4 22 6 -2 25 13 C44 -2 54 22 25 43Z' fill='none' stroke='#e0245e' stroke-width='3' stroke-linejoin='round'/>";
+  rs.setProperty('--d-heart',  url("<svg "+NS+" viewBox='-4 -4 58 52'>" + hp + "</svg>"));
+  rs.setProperty('--d-hearts', url("<svg "+NS+" viewBox='0 0 90 70'><g transform='translate(4,6) scale(1.05)'>" + hp + "</g><g transform='translate(54,28) scale(.68)'>" + hp + "</g></svg>"));
+
+  var PH_IMG = "data:image/svg+xml;utf8," + encodeURIComponent("<svg "+NS+" width='360' height='460'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#9ccdf0'/><stop offset='.6' stop-color='#f6d9a7'/><stop offset='1' stop-color='#7fb386'/></linearGradient></defs><rect width='360' height='460' fill='url(#g)'/><circle cx='260' cy='110' r='34' fill='#fff6c8'/><path d='M0 330 L110 210 L200 320 L270 250 L360 340 L360 460 L0 460Z' fill='#6c9a74'/><text x='180' y='420' font-size='26' text-anchor='middle' fill='#fff' font-family='sans-serif'>your photo here</text></svg>");
+
+  /* ---------- build the book ---------- */
+  var book = $('#book'), stage = $('#stage');
+  var pages = Array.prototype.slice.call(document.querySelectorAll('#pages > .page'));
+  if (pages.length % 2) {                       // odd ho to aakhri me khali page
+    var blank = document.createElement('article'); blank.className = 'page'; pages.push(blank);
+  }
+  pages.forEach(function(p, i){
+    p.classList.add(i % 2 ? 'R' : 'L');
+    var inner = document.createElement('div'); inner.className = 'inner';
+    while (p.firstChild) inner.appendChild(p.firstChild);
+    p.appendChild(inner);
+    var no = document.createElement('span'); no.className = 'pno'; no.textContent = i + 1; p.appendChild(no);
+  });
+
+  function face(node, side, extra){
+    var f = document.createElement('div'); f.className = 'face ' + side + (extra ? ' ' + extra : '');
+    f.appendChild(node); return f;
+  }
+  var L = pages.length / 2 + 1, leaves = [];
+  for (var k = 0; k < L; k++){
+    var leaf = document.createElement('div'); leaf.className = 'leaf';
+    var front = k === 0 ? $('#cover-front') : pages[2*k - 1];
+    var back  = k === L-1 ? $('#cover-back') : pages[2*k];
+    leaf.appendChild(face(front, 'front', k === 0 ? 'cover' : ''));
+    leaf.appendChild(face(back,  'back',  k === L-1 ? 'cover' : ''));
+    book.appendChild(leaf); leaves.push(leaf);
+  }
+
+  /* photo fallback (agar image load na ho) */
+  function imgFix(img){ if (!img.dataset.fb){ img.dataset.fb = 1; img.src = PH_IMG; } }
+  Array.prototype.forEach.call(document.querySelectorAll('.photo'), function(img){
+    img.addEventListener('error', function(){ imgFix(img); });
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) imgFix(img);
+  });
+
+  /* text zyada ho to font thora chota kar do taake page me poora aaye */
+  function fit(){
+    pages.forEach(function(p){
+      var inner = p.firstElementChild, fs = 23;
+      function set(){ p.style.setProperty('--fs', fs + 'px'); p.style.setProperty('--lh', Math.round(fs * 1.39) + 'px'); }
+      set();
+      while (inner.scrollHeight > inner.clientHeight + 2 && fs > 11){ fs -= .5; set(); }
+    });
+  }
+  fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  window.addEventListener('load', fit);
+
+  /* ---------- state & navigation ---------- */
+  var s = 0, side = 'R', single = false, busy = false;
+
+  function setZ(){ leaves.forEach(function(lf, i){ lf.style.zIndex = i < s ? i + 1 : L - i + 1; }); }
+
+  function layout(){
+    var W = innerWidth, H = innerHeight;
+    single = (W / H) < 1.2;                       // phone / portrait: ek waqt me ek page
+    var open = s > 0 && s < L, shift, basis;
+    if (single){
+      basis = 640;
+      if (s === 0){ shift = 0; side = 'R'; }
+      else if (s === L){ shift = PW; side = 'L'; }
+      else shift = (side === 'L') ? PW : 0;
+    } else {
+      basis = open ? 1270 : 680;
+      shift = s === 0 ? 0 : (s === L ? PW : PW / 2);
+    }
+    var sc = Math.min(W / basis, (H - 70) / (PH + 60), 1.5);
+    stage.style.transform = 'scale(' + sc + ')';
+    book.style.transform  = 'translateX(' + shift + 'px)';
+    book.classList.toggle('open', open);
+  }
+
+  function flip(d){
+    busy = true;
+    var lf = leaves[d > 0 ? s : s - 1];
+    lf.style.zIndex = 1000;
+    s += d;
+    side = d > 0 ? 'L' : 'R';
+    leaves.forEach(function(l, i){ l.classList.toggle('flipped', i < s); });
+    layout();
+    setTimeout(function(){ setZ(); busy = false; }, 1150);
+    hideHint();
+  }
+  function next(){
+    if (busy) return;
+    if (single && s > 0 && s < L && side === 'L'){ side = 'R'; layout(); hideHint(); return; }
+    if (s < L) flip(1);
+  }
+  function prev(){
+    if (busy) return;
+    if (single && s > 0 && s < L && side === 'R'){ side = 'L'; layout(); hideHint(); return; }
+    if (s > 0) flip(-1);
+  }
+  function hideHint(){ $('#hint').classList.add('gone'); }
+
+  $('#scene').addEventListener('click', function(e){
+    if (s === 0) next();
+    else if (s === L) prev();
+    else (e.clientX < innerWidth / 2) ? prev() : next();
+  });
+  $('#bNext').addEventListener('click', next);
+  $('#bPrev').addEventListener('click', prev);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  });
+  var tx = null;
+  document.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if (tx === null) return;
+    var dx = e.changedTouches[0].clientX - tx; tx = null;
+    if (Math.abs(dx) > 50){ dx < 0 ? next() : prev(); }
+  }, {passive:true});
+  window.addEventListener('resize', layout);
+
+  setZ(); layout();
+})();
+</script>
+</body>
+</html>
