@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Neesa's Dairy</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover"><title>Neesa's Diary</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Great+Vibes&family=Patrick+Hand&display=swap" rel="stylesheet">
@@ -147,6 +146,95 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
   background:rgba(20,12,6,.55); color:#f0dcb0; font-size:24px; line-height:38px; cursor:pointer; }
 .nav:hover{ background:rgba(60,35,14,.8); }
 #bPrev{ left:14px; } #bNext{ right:14px; }
+
+
+/* =========================================
+   RESPONSIVE DIARY DESIGN
+   ========================================= */
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+#scene {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+#stage {
+  flex-shrink: 0;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+#book {
+  transform-origin: left center;
+}
+
+.page {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.photo {
+  max-width: 100%;
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+  #hint {
+    font-size: 12px;
+    bottom: 7px;
+    padding: 0 45px;
+  }
+
+  .nav {
+    width: 36px;
+    height: 36px;
+    font-size: 21px;
+    line-height: 32px;
+    bottom: 8px;
+  }
+
+  #bPrev {
+    left: 6px;
+  }
+
+  #bNext {
+    right: 6px;
+  }
+}
+
+/* Larger mobile and small tablets */
+@media (min-width: 481px) and (max-width: 900px) {
+  #hint {
+    font-size: 14px;
+  }
+}
+
+/* Tablets and landscape phones */
+@media (max-height: 600px) {
+  #hint {
+    bottom: 3px;
+    font-size: 12px;
+  }
+
+  .nav {
+    bottom: 4px;
+  }
+}
+
+/* Prevent accidental text selection */
+#scene,
+#book,
+.leaf {
+  -webkit-user-select: none;
+  user-select: none;
+}
 </style>
 </head>
 
@@ -161,7 +249,7 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
 <div class="lamp">&#9733;&#9733;</div>
 <div class="pen"></div>
 
-<!-- Dairy yaha dikhti hai -->
+<!-- Diary yaha dikhti hai -->
 <div id="scene">
   <div id="stage">
     <div id="book">
@@ -171,16 +259,17 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
   </div>
 </div>
 
+<div id="hint">Click on the diary to open it &nbsp;&bull;&nbsp; to turn page , click on left or right side of page  </div>
 <button class="nav" id="bPrev" aria-label="Previous">&lsaquo;</button>
 <button class="nav" id="bNext" aria-label="Next">&rsaquo;</button>
 
 
 <!-- =====================================================================
-     ==========  Dairy KA CONTENT (yaha se text change karo)  ============
+     ==========  DIARY KA CONTENT (yaha se text change karo)  ============
      ===================================================================== -->
 <div id="source" style="display:none">
 
-  <!-- ================= 1) FRONT COVER KA TEXT (band Dairy ke upar) ================= -->
+  <!-- ================= 1) FRONT COVER KA TEXT (band diary ke upar) ================= -->
   <div id="cover-front" class="cover-art">
     <div class="spine-band"></div>
     <div class="c-title gold" style="font-family: 'Times New Roman', Times, serif;"">For Aashi</div>               <!-- <- Bara title -->
@@ -189,7 +278,7 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
     <div class="c-year gold">2026</div>                    <!-- <- Saal / naam -->
   </div>
 
-  <!-- ================= 2) BACK COVER KA TEXT (Dairy khatam hone par) ================= -->
+  <!-- ================= 2) BACK COVER KA TEXT (diary khatam hone par) ================= -->
   <div id="cover-back" class="cover-art">
     <div class="spine-band"></div>
     <div class="c-orn gold" style="font-size:54px">&#10047;</div>
@@ -198,7 +287,7 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
 
   <!-- ================= 3) PAGES ================= -->
   <!--
-    HAR <article class="page"> = Dairy ka EK page (aik taraf).
+    HAR <article class="page"> = diary ka EK page (aik taraf).
     Page 1 = left, Page 2 = right, Page 3 = left, Page 4 = right ... (khud ba khud).
     Naya page add karna ho to neeche kisi bhi page ka poora block
     <article class="page"> ... </article> COPY karke is list ke END me
@@ -234,7 +323,7 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
 
       <p class="ink-blue">Tum soch rahi ho gi keh mae na es me kia likha ho ga ya q likha ho ga . </p>
       <p class="ink-black"> Kafi waqt beeet gia tum sa na sahi sa bat ho ski , na kuch sahi sa poch saka , na kch bata ska . <br> Waqt ki kharabi the , Ghalat fehmio ka samandar , gussa tha ya Umeedo ka pora na hona . Ap keh ab rahi the keh door a gae . But jb start hoi hmari bat kch dino tk mae na tumha phla jesa banany ki bhapor koshesh ki but kamyab ni hoa to mujha laga keh mae kamyab ni ho skta es me  &#9786;  <span class="hrt"></span></p>
-      <p class="ink-green">Kon kaha ghalat hai kaha thek hai en bato ka peechy bhag bhag kar had sa ziada ghalat fehmia pal li the hm na . Bhot Umeedy lagi hoi the kch toti to phr ni pata chala kia ghalat ho rha kia sahi  &#9786; <br> Mera ya Dairy likhna ki aik sab sa bara maqsad tumha btana bhe hai keh mujha tum sa koi Gila nahi Neesa &#128153; <br> Aor ya mae dill sa keh rha . Jo hoa jesa hoa meri bhe bht ghaltia os me . Lakin kb tk serf dosry ko ghalat kehna ki koshesh <br> me rahain gy . Jitna hum ghalti pa kesi ko blame <br> krty hai otna hum kbhe os ki achaio pa ni sarahty .</p>
+      <p class="ink-green">Kon kaha ghalat hai kaha thek hai en bato ka peechy bhag bhag kar had sa ziada ghalat fehmia pal li the hm na . Bhot Umeedy lagi hoi the kch toti to phr ni pata chala kia ghalat ho rha kia sahi  &#9786; <br> Mera ya diary likhna ki aik sab sa bara maqsad tumha btana bhe hai keh mujha tum sa koi Gila nahi Neesa &#128153; <br> Aor ya mae dill sa keh rha . Jo hoa jesa hoa meri bhe bht ghaltia os me . Lakin kb tk serf dosry ko ghalat kehna ki koshesh <br> me rahain gy . Jitna hum ghalti pa kesi ko blame <br> krty hai otna hum kbhe os ki achaio pa ni sarahty .</p>
       <i class="doodle flower" style="right:70px;bottom:78px"></i>
     </article>
 
@@ -243,7 +332,7 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
       <div class="date">26 Oct 2026</div>
      
       <img class="photo right big" src="First.jpg" alt="photo">
-      <p class="ink-blue">To mae na socha keh aj es Dairy me manfi bato ko chor ka Kuch musbat likhoo . Wo likho jen pa mujha tumhara shukar guzar hona chahia , Wo likho jes me tm na mera sath dia , Wo likho jo hm na achi yady bnae , Wo likho jo lamhy mae yad karta akser , Wo likho jes me sawal na  hon , Wo likho jes me qasooor na likhy hoe hon , Wo likho jes me khaloos ho aor wo likho jo mae dill sa likho  &#128153; <br> </p>
+      <p class="ink-blue">To mae na socha keh aj es Diary me manfi bato ko chor ka Kuch musbat likhoo . Wo likho jen pa mujha tumhara shukar guzar hona chahia , Wo likho jes me tm na mera sath dia , Wo likho jo hm na achi yady bnae , Wo likho jo lamhy mae yad karta akser , Wo likho jes me sawal na  hon , Wo likho jes me qasooor na likhy hoe hon , Wo likho jes me khaloos ho aor wo likho jo mae dill sa likho  &#128153; <br> </p>
       <p class="ink-orange">Har insan ka apna masly hoty , Apna dukh apni preshaniaaa . Aor ya bhee sach hai keh jo face kr rha hota actual me wo he samjh sakta keh wo kesy kr rha . Wo masly phr tumhary hon  , mery hon ya kesi bhe insan ka . Masly hmesha preshani laty hai , demaghi sakon chala jata , dabao barh jata aor ya sary chezy yaqinan dunia ka har isnan ka sath hoti rehti hain . </p>
       <p class="ink-purple">Tum pa bhe mushkil waqt aya jes me mae tumhary sath ni tha . mery sath bhe esy kafi mamlat pesh ae jen me mera bojh halka krna wala koi ni tha . On ki waja sa phr kafi chezy kharab ho gy . </p>
       <p class="ink-black"> Phr mae na socha keh masly to hmesha rehty hain . Agr koi sath dy to os ka shukr gzar hona chahia aor agr koi na dy pae to os sa khafa hony ki bhe zrorat ni  &#9786;</p>
@@ -384,7 +473,7 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
 
 
 <!-- =====================================================================
-     SCRIPT (Dairy ko chalane wala code) - isme kuch change karne ki zaroorat nahi
+     SCRIPT (diary ko chalane wala code) - isme kuch change karne ki zaroorat nahi
      ===================================================================== -->
 <script>
 (function(){
@@ -473,24 +562,53 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
 
   function setZ(){ leaves.forEach(function(lf, i){ lf.style.zIndex = i < s ? i + 1 : L - i + 1; }); }
 
-  function layout(){
-    var W = innerWidth, H = innerHeight;
-    single = (W / H) < 1.2;                       // phone / portrait: ek waqt me ek page
-    var open = s > 0 && s < L, shift, basis;
-    if (single){
-      basis = 640;
-      if (s === 0){ shift = 0; side = 'R'; }
-      else if (s === L){ shift = PW; side = 'L'; }
-      else shift = (side === 'L') ? PW : 0;
+function layout() {
+  var W = window.innerWidth;
+  var H = window.innerHeight;
+
+  // Portrait screens show one page at a time
+  single = (W / H) < 1.2;
+
+  var open = s > 0 && s < L;
+  var shift, basis;
+
+  if (single) {
+    basis = 640;
+
+    if (s === 0) {
+      shift = 0;
+      side = 'R';
+    } else if (s === L) {
+      shift = PW;
+      side = 'L';
     } else {
-      basis = open ? 1270 : 680;
-      shift = s === 0 ? 0 : (s === L ? PW : PW / 2);
+      shift = (side === 'L') ? PW : 0;
     }
-    var sc = Math.min(W / basis, (H - 70) / (PH + 60), 1.5);
-    stage.style.transform = 'scale(' + sc + ')';
-    book.style.transform  = 'translateX(' + shift + 'px)';
-    book.classList.toggle('open', open);
+
+  } else {
+    basis = open ? 1270 : 680;
+
+    shift = s === 0
+      ? 0
+      : (s === L ? PW : PW / 2);
   }
+
+  // Available screen space
+  var availableWidth = Math.max(200, W - 24);
+  var availableHeight = Math.max(200, H - 85);
+
+  // Scale diary according to screen dimensions
+  var scaleX = availableWidth / basis;
+  var scaleY = availableHeight / (PH + 60);
+
+  var scale = Math.min(scaleX, scaleY, 1.5);
+
+  stage.style.transform = 'scale(' + scale + ')';
+
+  book.style.transform = 'translateX(' + shift + 'px)';
+
+  book.classList.toggle('open', open);
+}
 
   function flip(d){
     busy = true;
@@ -526,13 +644,40 @@ body::after{ content:''; position:fixed; inset:0; z-index:1; pointer-events:none
     if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
     if (e.key === 'ArrowLeft'  || e.key === 'PageUp') { e.preventDefault(); prev(); }
   });
-  var tx = null;
-  document.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; }, {passive:true});
-  document.addEventListener('touchend', function(e){
-    if (tx === null) return;
-    var dx = e.changedTouches[0].clientX - tx; tx = null;
-    if (Math.abs(dx) > 50){ dx < 0 ? next() : prev(); }
-  }, {passive:true});
+
+var tx = null;
+
+document.addEventListener('touchstart', function(e) {
+  // Don't treat pinch zoom as a page swipe
+  if (e.touches.length !== 1) {
+    tx = null;
+    return;
+  }
+
+  tx = e.touches[0].clientX;
+}, { passive: true });
+
+document.addEventListener('touchend', function(e) {
+  if (tx === null) return;
+
+  // Ignore multi-finger gestures
+  if (e.changedTouches.length !== 1) {
+    tx = null;
+    return;
+  }
+
+  var dx = e.changedTouches[0].clientX - tx;
+  tx = null;
+
+  if (Math.abs(dx) > 60) {
+    dx < 0 ? next() : prev();
+  }
+}, { passive: true });
+
+document.addEventListener('touchcancel', function() {
+  tx = null;
+}, { passive: true });
+
   window.addEventListener('resize', layout);
 
   setZ(); layout();
